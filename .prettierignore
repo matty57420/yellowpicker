@@ -1,0 +1,38 @@
+# Build & dist
+dist/
+build/
+out/
+.next/
+.nuxt/
+.output/
+.turbo/
+
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Coverage
+coverage/
+.nyc_output/
+
+# Logs
+*.log
+
+# Generated
+*.generated.*
+__generated__/
+
+# Public assets
+public/
+
+# IDE
+.vscode/
+.idea/
+
+# Misc
+.DS_Store
+*.snap
+server/data/
+**/dist/
+package-lock.json
+.claude/

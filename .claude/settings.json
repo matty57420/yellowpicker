@@ -1,0 +1,62 @@
+{
+  "_comment": "Profil SANDBOX — pour POC, spike, demo, side-project. Quasi tout en allow pour iterer vite. NE PAS UTILISER sur du code client ou de la donnee reelle.",
+  "permissions": {
+    "allow": [
+      "Read",
+      "Grep",
+      "Glob",
+      "Edit",
+      "Write",
+      "Bash(ls *)",
+      "Bash(cat *)",
+      "Bash(pwd)",
+      "Bash(git *)",
+      "Bash(mvn *)",
+      "Bash(npm *)",
+      "Bash(npx *)",
+      "Bash(pnpm *)",
+      "Bash(yarn *)",
+      "Bash(python *)",
+      "Bash(pytest *)",
+      "Bash(dotnet *)",
+      "Bash(docker *)",
+      "WebFetch",
+      "WebSearch"
+    ],
+    "deny": [
+      "Bash(rm -rf /*)",
+      "Bash(rm -rf ~/*)",
+      "Bash(sudo rm *)",
+      "Bash(git push --force origin master)",
+      "Bash(git push --force origin main)",
+      "Bash(git push -f origin master)",
+      "Bash(git push -f origin main)",
+      "Bash(npm publish *)",
+      "Bash(mvn deploy *)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Read|Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "./.claude/hooks/block-secrets/hook.sh"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "./.claude/hooks/format-on-write/hook.sh"
+          }
+        ]
+      }
+    ]
+  }
+}

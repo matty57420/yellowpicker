@@ -1,0 +1,40 @@
+# .editorconfig canonique
+# Référence universelle pour tous les éditeurs. À copier à la racine de tout repo.
+# https://editorconfig.org/
+
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = space
+
+# Indentation par défaut : 4 (Java, .NET, Python)
+[*]
+indent_size = 4
+
+# Indentation 2 pour JS/TS/JSON/YAML/Markdown (convention écosystème)
+[*.{js,jsx,ts,tsx,mjs,cjs,json,yaml,yml,md,mdx,vue}]
+indent_size = 2
+
+# CSS / HTML : 2 espaces (convention frontend)
+[*.{css,scss,sass,less,html}]
+indent_size = 2
+
+# Makefile : tabs requis
+[{Makefile,makefile,*.mk}]
+indent_style = tab
+
+# Pas de trim sur Markdown (les deux espaces en fin de ligne = saut de ligne forcé)
+[*.md]
+trim_trailing_whitespace = false
+
+# Shell scripts : 2 espaces (convention Google)
+[*.{sh,bash}]
+indent_size = 2
+
+# PowerShell : 4 espaces
+[*.{ps1,psm1,psd1}]
+indent_size = 4

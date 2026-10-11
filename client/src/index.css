@@ -1,0 +1,24 @@
+@import 'tailwindcss';
+
+@theme {
+  --color-ink: #111013;
+  --color-panel: #1c1a20;
+  --color-line: #2e2b34;
+  --color-muted: #a19cab;
+  --color-accent: #facc15;
+  --color-accent-ink: #1a1500;
+  --font-display: 'Bebas Neue', 'Impact', system-ui, sans-serif;
+}
+
+@layer base {
+  html {
+    color-scheme: dark;
+  }
+  body {
+    @apply bg-ink text-zinc-100 antialiased;
+  }
+  dialog::backdrop {
+    background: rgb(0 0 0 / 0.7);
+    backdrop-filter: blur(4px);
+  }
+}
