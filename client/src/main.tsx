@@ -5,6 +5,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router';
 
 import { AdminPage } from './features/admin/admin-page';
 import { LoginPage } from './features/admin/login-page';
+import { HomePage } from './features/home/home-page';
 import { PickerPage } from './features/picker/picker-page';
 import './index.css';
 
@@ -13,7 +14,8 @@ const queryClient = new QueryClient({
 });
 
 const router = createBrowserRouter([
-  { path: '/', element: <PickerPage /> },
+  { path: '/', element: <HomePage /> },
+  { path: '/personnages', element: <PickerPage /> },
   { path: '/admin', element: <AdminPage /> },
   { path: '/admin/login', element: <LoginPage /> },
 ]);

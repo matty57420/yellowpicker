@@ -42,7 +42,7 @@ export function AdminPage() {
           <h1 className="font-display text-5xl tracking-wide text-accent">Administration</h1>
           <p className="text-muted">
             {list.length} personnage(s) · {totalPicks} inscrit(s) ·{' '}
-            <Link to="/" className="underline hover:text-zinc-100">
+            <Link to="/personnages" className="underline hover:text-zinc-100">
               voir le site
             </Link>
           </p>

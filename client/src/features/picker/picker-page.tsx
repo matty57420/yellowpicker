@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router';
 
 import { useCancelPick, useCharacters } from '../../api/characters';
 import { Modal } from '../../components/modal';
@@ -33,7 +34,9 @@ export function PickerPage() {
     <>
       <PageHeader>
         <div>
-          <h1 className="font-display text-5xl tracking-wide text-accent">Yellow Picker</h1>
+          <h1 className="font-display text-5xl tracking-wide text-accent">
+            <Link to="/">Yellow Picker</Link>
+          </h1>
           <p className="text-muted">Choisis ton personnage pour la soirée déguisée.</p>
         </div>
         {myPick && myCharacter && (
