@@ -1,0 +1,11 @@
+[Unit]
+Description=Sauvegarde quotidienne de Yellow Picker
+
+[Timer]
+OnCalendar=daily
+# Rattrape la sauvegarde si le serveur était éteint à l'heure prévue.
+Persistent=true
+RandomizedDelaySec=30m
+
+[Install]
+WantedBy=timers.target
