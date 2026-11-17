@@ -29,12 +29,22 @@ npm run dev                          # API sur :3000, front sur :5173 (proxy /ap
 
 ## Production
 
+Déploiement sur un VPS (Hetzner Cloud) : **[`docs/deployment.md`](docs/deployment.md)** — Caddy pour
+le TLS, systemd pour le service, `./scripts/deploy.sh` pour chaque mise à jour.
+
 ```bash
 npm run build
 NODE_ENV=production ADMIN_USERNAME=admin ADMIN_PASSWORD=... npm start
 ```
 
 Le serveur sert l'API, les photos (`/uploads`) et le build du client sur le même port. Les données (base SQLite + photos) vivent dans `server/data/` (`DATA_DIR`), le dossier à sauvegarder.
+
+Deux réglages ne sont pas optionnels en production :
+
+- **HTTPS** — le cookie de session admin est posé avec `secure`, donc en HTTP simple le navigateur
+  le refuse et le login admin ne fonctionne pas. Il faut un reverse proxy TLS.
+- **`TRUST_PROXY=true` derrière ce proxy, et nulle part ailleurs** — sinon le rate-limit du login
+  compte toutes les tentatives sur l'IP du proxy, et son quota devient global au lieu d'être par IP.
 
 ## Qualité
 

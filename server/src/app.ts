@@ -16,6 +16,7 @@ import { ImageStore, MAX_IMAGE_BYTES } from './uploads.ts';
 
 export async function buildApp(config: Config): Promise<FastifyInstance> {
   const app = Fastify({
+    trustProxy: config.trustProxy,
     logger: config.isProduction ? true : { level: process.env.LOG_LEVEL ?? 'info' },
   });
   const db = openDb(config.dbPath);

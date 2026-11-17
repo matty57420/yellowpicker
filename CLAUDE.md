@@ -41,6 +41,7 @@ Le projet suit [`config-dev/policies/engineering-doctrine.md`](~/dev/config-dev/
 - Jamais de secret dans une variable `VITE_*` ; `.env` jamais commité (voir `server/.env.example`).
 - Ne pas exporter de valeur runtime depuis `shared/` (le serveur buildé ne le compile pas).
 - Pas de `dangerouslySetInnerHTML`, pas de `// @ts-ignore`.
+- `TRUST_PROXY=true` uniquement si un reverse proxy de confiance est devant : sinon le rate-limit du login devient un compteur global (cf. `tasks/lessons.md`).
 
 ## Commandes
 

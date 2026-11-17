@@ -1,0 +1,17 @@
+# Domaine injecté par /etc/default/caddy (YP_DOMAIN) pour ne pas committer le
+# nom d'hôte. Caddy obtient et renouvelle seul le certificat Let's Encrypt, et
+# redirige http -> https par défaut.
+{$YP_DOMAIN} {
+	encode zstd gzip
+
+	# Caddy ajoute X-Forwarded-For / -Proto, dont le serveur a besoin
+	# (TRUST_PROXY=true) pour voir la vraie IP cliente.
+	reverse_proxy 127.0.0.1:3000
+
+	log {
+		output file /var/log/caddy/yellowpicker.log {
+			roll_size 10MiB
+			roll_keep 5
+		}
+	}
+}

@@ -26,3 +26,29 @@
 ## Critères de fin de session
 
 - [x] `npm run type-check && npm run lint && npm test && npm run build` passent
+
+## Session 2026-11-17 — Déploiement VPS Hetzner
+
+- **Chantier** : mise en production sur un VPS Hetzner Cloud (Ubuntu 24.04)
+- **Choix** : un seul process Node derrière Caddy (TLS auto), systemd, `git pull` + build sur le
+  serveur. Pas de Docker : un process + un volume de données, il n'apporterait que des pièces.
+
+### Fait
+
+- [x] `TRUST_PROXY` (défaut `false`) dans `server/src/config.ts`, passé à `Fastify()` — sans ça le
+      rate-limit du login était global au lieu d'être par IP, donc verrouillable par n'importe qui
+      en 10 requêtes
+- [x] Test du rate-limit par IP à travers `X-Forwarded-For` (vérifié : il échoue bien si on remet
+      `trustProxy: false`)
+- [x] `deploy/` : `bootstrap.sh` (provisioning idempotent), unité systemd durcie, `Caddyfile`,
+      `env.example`, `backup.sh` + timer quotidien
+- [x] `scripts/deploy.sh` : fetch + reset + `npm ci` + build + restart + smoke test HTTPS
+- [x] `docs/deployment.md` : runbook (création VPS, DNS, secrets, exploitation, restauration)
+
+### À faire par l'utilisateur (hors code)
+
+- [ ] Créer le VPS (CX22, Ubuntu 24.04) avec sa clé SSH
+- [ ] Acheter le domaine et créer l'enregistrement A/AAAA (stopgap : `<ip>.sslip.io`)
+- [ ] `bootstrap.sh`, coller la deploy key dans GitHub, relancer
+- [ ] Remplir `ADMIN_PASSWORD` dans `/etc/yellowpicker.env`
+- [ ] `./scripts/deploy.sh`, puis la vérification depuis un téléphone (cf. runbook)

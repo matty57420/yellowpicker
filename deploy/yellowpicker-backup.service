@@ -1,0 +1,14 @@
+[Unit]
+Description=Sauvegarde Yellow Picker (base SQLite + photos)
+Documentation=https://github.com/matty57420/yellowpicker/blob/main/docs/deployment.md
+
+[Service]
+Type=oneshot
+User=yellowpicker
+Group=yellowpicker
+ExecStart=/srv/yellowpicker/deploy/backup.sh
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=strict
+ProtectHome=yes
+ReadWritePaths=/srv/yellowpicker/server/data /srv/yellowpicker/backups

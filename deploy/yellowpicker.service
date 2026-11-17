@@ -1,0 +1,30 @@
+[Unit]
+Description=Yellow Picker (API + photos + SPA)
+Documentation=https://github.com/matty57420/yellowpicker/blob/main/docs/deployment.md
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=yellowpicker
+Group=yellowpicker
+WorkingDirectory=/srv/yellowpicker/server
+# node directement plutôt que `npm start` : pas de process wrapper, SIGTERM
+# arrive réellement au serveur et le hook onClose ferme la base proprement.
+ExecStart=/usr/bin/node dist/main.js
+EnvironmentFile=/etc/yellowpicker.env
+Restart=always
+RestartSec=2
+
+# Durcissement : le process ne peut écrire que le dossier de données.
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=strict
+ProtectHome=yes
+ProtectKernelTunables=yes
+ProtectControlGroups=yes
+RestrictSUIDSGID=yes
+ReadWritePaths=/srv/yellowpicker/server/data
+
+[Install]
+WantedBy=multi-user.target
