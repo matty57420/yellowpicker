@@ -9,6 +9,8 @@ const envSchema = z.object({
   DATA_DIR: z.string().default('data'),
   /** Dossier du build Vite servi en production (SPA). */
   CLIENT_DIST: z.string().default('../client/dist'),
+  /** `true` uniquement derrière un reverse proxy de confiance (cf. docs/deployment.md). */
+  TRUST_PROXY: z.stringbool().default(false),
   ADMIN_USERNAME: z.string().min(1).optional(),
   ADMIN_PASSWORD: z.string().min(10, 'ADMIN_PASSWORD doit faire au moins 10 caractères').optional(),
 });
@@ -17,6 +19,7 @@ export interface Config {
   isProduction: boolean;
   host: string;
   port: number;
+  trustProxy: boolean;
   dbPath: string;
   uploadsDir: string;
   clientDist: string;
@@ -30,6 +33,7 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
     isProduction: parsed.NODE_ENV === 'production',
     host: parsed.HOST,
     port: parsed.PORT,
+    trustProxy: parsed.TRUST_PROXY,
     dbPath: path.join(dataDir, 'yellowpicker.db'),
     uploadsDir: path.join(dataDir, 'uploads'),
     clientDist: path.resolve(parsed.CLIENT_DIST),

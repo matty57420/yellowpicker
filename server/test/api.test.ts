@@ -8,7 +8,7 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 import { buildApp } from '../src/app.ts';
 import { personKey } from '../src/characters.ts';
-import type { Config } from '../src/config.ts';
+import { type Config, loadConfig } from '../src/config.ts';
 
 const PNG = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0, 0, 0, 0]);
 
@@ -67,6 +67,7 @@ beforeEach(async () => {
     isProduction: false,
     host: '127.0.0.1',
     port: 0,
+    trustProxy: false,
     dbPath: ':memory:',
     uploadsDir: path.join(dataDir, 'uploads'),
     clientDist: dataDir,
@@ -183,5 +184,61 @@ describe('choix de personnage', () => {
 describe('personKey', () => {
   it('normalise casse, accents et espaces', () => {
     expect(personKey({ firstName: '  Zoé  Anne', lastName: 'MARTIN ' })).toBe('zoe anne|martin');
+  });
+});
+
+describe('loadConfig', () => {
+  it('ne fait pas confiance au proxy par défaut', () => {
+    expect(loadConfig({}).trustProxy).toBe(false);
+  });
+
+  it('active trustProxy sur TRUST_PROXY=true', () => {
+    expect(loadConfig({ TRUST_PROXY: 'true' }).trustProxy).toBe(true);
+    expect(loadConfig({ TRUST_PROXY: 'false' }).trustProxy).toBe(false);
+  });
+
+  it('refuse une valeur de TRUST_PROXY non booléenne', () => {
+    expect(() => loadConfig({ TRUST_PROXY: 'oui' })).toThrow();
+  });
+});
+
+describe('rate limit du login derrière un proxy', () => {
+  /** Construit une app isolée : `trustProxy` est fixé à la construction de Fastify. */
+  async function buildProxiedApp(): Promise<FastifyInstance> {
+    const config: Config = {
+      isProduction: false,
+      host: '127.0.0.1',
+      port: 0,
+      trustProxy: true,
+      dbPath: ':memory:',
+      uploadsDir: path.join(dataDir, 'uploads-proxy'),
+      clientDist: dataDir,
+      admin: null,
+    };
+    return buildApp(config);
+  }
+
+  function failedLogin(instance: FastifyInstance, clientIp: string) {
+    return instance.inject({
+      method: 'POST',
+      url: '/api/admin/login',
+      headers: { 'x-forwarded-for': clientIp },
+      payload: { username: 'inconnu', password: 'mauvais-mot-de-passe' },
+    });
+  }
+
+  it('compte les tentatives par IP cliente, pas par IP du proxy', async () => {
+    const proxied = await buildProxiedApp();
+    try {
+      for (let attempt = 0; attempt < 10; attempt++) {
+        expect((await failedLogin(proxied, '203.0.113.9')).statusCode).toBe(401);
+      }
+      // 11e tentative de la même IP : quota épuisé.
+      expect((await failedLogin(proxied, '203.0.113.9')).statusCode).toBe(429);
+      // Une autre IP garde son propre quota : le brute-force n'enferme pas les autres.
+      expect((await failedLogin(proxied, '198.51.100.4')).statusCode).toBe(401);
+    } finally {
+      await proxied.close();
+    }
   });
 });
