@@ -2,7 +2,6 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { createIntroSound, type IntroSound } from './intro-sound';
 
-const SEEN_KEY = 'yp:intro-seen';
 /** Durée totale avant de rendre la main au picker. */
 const DURATION_MS = 3400;
 /** Le flot jaune démarre avant la fin pour recouvrir l'écran au moment du passage. */
@@ -19,23 +18,11 @@ const SPRITE_H = 46;
 const SPRITE_W = SPRITE_H * (261 / 420);
 
 /**
- * L'intro ne se joue qu'une fois par appareil, et jamais si le téléphone
- * demande moins d'animations : un invité qui revient veut son perso, pas un film.
+ * L'intro se joue à chaque chargement de page. Seule exception : un appareil
+ * réglé pour limiter les animations, qu'on ne force pas.
  */
 export function shouldShowIntro(): boolean {
-  if (globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches) {
-    return false;
-  }
-  // ?intro rejoue l'animation : pour la montrer ou la tester sans vider le stockage.
-  if (new URLSearchParams(globalThis.location?.search ?? '').has('intro')) {
-    return true;
-  }
-  try {
-    return localStorage.getItem(SEEN_KEY) === null;
-  } catch {
-    // Navigation privée : on n'insiste pas.
-    return false;
-  }
+  return !globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 }
 
 export function WaveIntro({ onDone }: { onDone: () => void }) {
@@ -46,11 +33,6 @@ export function WaveIntro({ onDone }: { onDone: () => void }) {
   const finish = useCallback(() => {
     sound.current?.stop();
     sound.current = null;
-    try {
-      localStorage.setItem(SEEN_KEY, '1');
-    } catch {
-      // Sans stockage, l'intro se rejouera : acceptable.
-    }
     onDone();
   }, [onDone]);
 
