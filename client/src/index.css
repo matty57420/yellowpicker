@@ -94,3 +94,32 @@
     transform: translateY(0);
   }
 }
+
+/* Confirmation de choix (features/picker/pick-confirmation.tsx) */
+@keyframes yp-confetti {
+  0% {
+    transform: translateY(-12vh) rotate(0deg);
+    opacity: 0;
+  }
+  8% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(104vh) rotate(720deg);
+    opacity: 0.9;
+  }
+}
+
+@keyframes yp-pop {
+  0% {
+    transform: scale(0.82);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.03);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
