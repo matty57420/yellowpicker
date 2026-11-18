@@ -1,11 +1,14 @@
+import type { Character } from '@yellowpicker/shared';
 import { useState } from 'react';
 
 import { useCancelPick, useCharacters } from '../../api/characters';
 import { Modal } from '../../components/modal';
 import { Button, ErrorMessage, PageHeader } from '../../components/ui';
+import { EVENT_DATE_SHORT } from '../../lib/event';
 import { loadMyPick, saveMyPick, type MyPick } from '../../lib/my-pick';
 
 import { CharacterCard } from './character-card';
+import { PickConfirmation } from './pick-confirmation';
 import { PickForm } from './pick-form';
 import { slotsLeft } from './slots';
 import { shouldShowIntro, WaveIntro } from './wave-intro';
@@ -16,6 +19,9 @@ export function PickerPage() {
   const [storedPick, setStoredPick] = useState<MyPick | null>(loadMyPick);
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [intro, setIntro] = useState(shouldShowIntro);
+  const [confirmed, setConfirmed] = useState<{ character: Character; firstName: string } | null>(
+    null,
+  );
 
   const list = characters.data ?? [];
   // Le choix mémorisé n'est valable que s'il existe encore côté serveur (l'admin a pu le retirer).
@@ -43,7 +49,9 @@ export function PickerPage() {
           <p className="font-display indent-[0.3em] text-2xl leading-tight tracking-[0.3em] text-muted uppercase sm:text-4xl">
             Yellow Picker
           </p>
-          <p className="mt-3 text-muted">Choisis ton personnage pour la soirée déguisée.</p>
+          <p className="mt-2 font-display indent-[0.25em] text-3xl tracking-[0.25em] text-accent sm:text-5xl">
+            {EVENT_DATE_SHORT}
+          </p>
         </div>
         {myPick && myCharacter && (
           <div className="mx-auto flex items-center gap-3 rounded-xl border border-accent/40 bg-panel px-4 py-2">
@@ -95,11 +103,20 @@ export function PickerPage() {
                 characterId: created.characterId,
                 editToken: created.editToken,
               });
+              setConfirmed({ character: selected, firstName: created.pick.firstName });
               setSelectedId(null);
             }}
           />
         )}
       </Modal>
+
+      {confirmed && (
+        <PickConfirmation
+          character={confirmed.character}
+          firstName={confirmed.firstName}
+          onClose={() => setConfirmed(null)}
+        />
+      )}
     </>
   );
 }
