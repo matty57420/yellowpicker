@@ -1,4 +1,4 @@
-import type { Character } from '@yellowpicker/shared';
+import type { Character, Pick } from '@yellowpicker/shared';
 import { useState } from 'react';
 import { Link, Navigate } from 'react-router';
 
@@ -24,6 +24,7 @@ export function AdminPage() {
   const deleteCharacter = useDeleteCharacter();
   const deletePick = useDeletePickAsAdmin();
   const [editing, setEditing] = useState<Editing>(null);
+  const [photo, setPhoto] = useState<Pick | null>(null);
 
   if (session.isPending) {
     return <p className="p-8 text-muted">Chargement…</p>;
@@ -82,7 +83,14 @@ export function AdminPage() {
                     key={pick.id}
                     className="flex items-center gap-2 rounded-full bg-ink py-1 pr-1 pl-1 text-sm"
                   >
-                    <Avatar src={pick.photoUrl} alt="" size="sm" />
+                    <button
+                      type="button"
+                      onClick={() => setPhoto(pick)}
+                      aria-label={`Voir la photo de ${pick.firstName} ${pick.lastName}`}
+                      className="cursor-pointer rounded-full focus-visible:outline-2 focus-visible:outline-accent"
+                    >
+                      <Avatar src={pick.photoUrl} alt="" size="md" />
+                    </button>
                     {pick.firstName} {pick.lastName}
                     <button
                       type="button"
@@ -138,6 +146,20 @@ export function AdminPage() {
           <CharacterForm
             character={editing.mode === 'edit' ? editing.character : undefined}
             onDone={() => setEditing(null)}
+          />
+        )}
+      </Modal>
+
+      <Modal
+        open={photo !== null}
+        title={photo ? `${photo.firstName} ${photo.lastName}` : ''}
+        onClose={() => setPhoto(null)}
+      >
+        {photo && (
+          <img
+            src={photo.photoUrl}
+            alt={`Photo de ${photo.firstName} ${photo.lastName}`}
+            className="max-h-[70vh] w-full rounded-xl object-contain"
           />
         )}
       </Modal>
