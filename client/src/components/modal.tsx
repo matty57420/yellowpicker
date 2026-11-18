@@ -1,4 +1,4 @@
-import { useEffect, useRef, type ReactNode } from 'react';
+import { useEffect, useId, useRef, type ReactNode } from 'react';
 
 interface ModalProps {
   open: boolean;
@@ -10,6 +10,8 @@ interface ModalProps {
 /** Modale accessible basée sur l'élément natif <dialog> (focus trap + Échap gérés par le navigateur). */
 export function Modal({ open, title, onClose, children }: ModalProps) {
   const ref = useRef<HTMLDialogElement>(null);
+  // id unique : plusieurs modales coexistent dans le DOM (une seule ouverte à la fois).
+  const titleId = useId();
 
   useEffect(() => {
     const dialog = ref.current;
@@ -27,11 +29,11 @@ export function Modal({ open, title, onClose, children }: ModalProps) {
     <dialog
       ref={ref}
       onClose={onClose}
-      aria-labelledby="modal-title"
+      aria-labelledby={titleId}
       className="m-auto w-[min(32rem,calc(100%-2rem))] rounded-2xl border border-line bg-panel p-0 text-zinc-100"
     >
       <div className="flex items-center justify-between border-b border-line px-5 py-4">
-        <h2 id="modal-title" className="font-display text-2xl tracking-wide">
+        <h2 id={titleId} className="font-display text-2xl tracking-wide">
           {title}
         </h2>
         <button
