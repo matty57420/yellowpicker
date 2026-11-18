@@ -8,12 +8,14 @@ import { loadMyPick, saveMyPick, type MyPick } from '../../lib/my-pick';
 import { CharacterCard } from './character-card';
 import { PickForm } from './pick-form';
 import { slotsLeft } from './slots';
+import { shouldShowIntro, WaveIntro } from './wave-intro';
 
 export function PickerPage() {
   const characters = useCharacters();
   const cancelPick = useCancelPick();
   const [storedPick, setStoredPick] = useState<MyPick | null>(loadMyPick);
   const [selectedId, setSelectedId] = useState<number | null>(null);
+  const [intro, setIntro] = useState(shouldShowIntro);
 
   const list = characters.data ?? [];
   // Le choix mémorisé n'est valable que s'il existe encore côté serveur (l'admin a pu le retirer).
@@ -31,6 +33,8 @@ export function PickerPage() {
 
   return (
     <>
+      {intro && <WaveIntro onDone={() => setIntro(false)} />}
+
       <PageHeader>
         <div className="w-full text-center">
           <h1 className="font-display bg-gradient-to-b from-yellow-100 via-accent to-orange-500 bg-clip-text text-5xl leading-[0.9] tracking-wide text-transparent uppercase drop-shadow-[0_0_35px_rgba(250,204,21,0.45)] sm:text-7xl lg:text-8xl">
